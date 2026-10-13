@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09111f">
+<meta name="description" content="WORLD LEADERS — геополитическая стратегия на карте мира.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>WORLD LEADERS</title>
+<style>
+:root{--bg:#09111f;--panel:#121e31;--panel2:#182842;--text:#edf4ff;--muted:#9db0cc;--accent:#55d6be;--gold:#f5c76b;--danger:#ff7272}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#142744,var(--bg) 60%);color:var(--text);font:15px/1.45 system-ui,Segoe UI,Arial,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid #2a3a54;background:#0a1424dd;position:sticky;top:0;z-index:3;backdrop-filter:blur(10px)}
+.logo{font-weight:900;letter-spacing:2px;font-size:clamp(18px,3vw,26px)}.logo span{color:var(--accent)}.tag{color:var(--muted);font-size:12px}
+button,select,input{font:inherit;color:var(--text);background:#20324d;border:1px solid #3b5274;border-radius:10px;padding:10px 12px}
+button{cursor:pointer;font-weight:700;transition:.15s}button:hover{filter:brightness(1.15);transform:translateY(-1px)}button.primary{background:var(--accent);border-color:var(--accent);color:#08201d}button.warn{background:#5c2b36;border-color:#8e4653}
+main{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(290px,1fr);gap:14px;padding:14px;max-width:1500px;margin:auto}
+.card{background:linear-gradient(160deg,#15243a,#101a2b);border:1px solid #2a3c57;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px #0002}
+.cardhead{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-bottom:1px solid #2a3c57}.cardhead h2{margin:0;font-size:16px}.small{color:var(--muted);font-size:12px}
+.mapwrap{height:min(65vh,650px);min-height:350px;background:#0b1728;position:relative;overflow:hidden}
+#map{width:100%;height:100%;display:block;cursor:grab}#map:active{cursor:grabbing}.country{stroke:#0c1726;stroke-width:.7;vector-effect:non-scaling-stroke;cursor:pointer;transition:fill .12s}.country:hover{stroke:#fff;stroke-width:1.5}.country.selected{stroke:#fff;stroke-width:2.4}
+.mapstatus{position:absolute;bottom:12px;left:12px;right:12px;display:flex;gap:8px;justify-content:space-between;pointer-events:none}.pill{background:#0a1424e8;border:1px solid #31445f;padding:7px 10px;border-radius:10px;font-size:12px;backdrop-filter:blur(8px)}
+.side{display:grid;gap:14px;align-content:start}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;padding:12px}.stat{padding:12px;background:#0d192a;border:1px solid #293d59;border-radius:12px}.stat b{display:block;font-size:20px;margin-top:4px}.stat label{color:var(--muted);font-size:12px}
+.content{padding:14px 16px}.countrytitle{font-size:22px;font-weight:850;margin:0 0 4px}.flag{font-size:30px;margin-right:8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.actions button{font-size:13px;padding:10px 8px}.log{height:160px;overflow:auto;padding:10px 14px;font-size:13px}.log p{margin:0;padding:7px 0;border-bottom:1px solid #23344d;color:#cfdbed}.log p:last-child{border:0}.notice{margin:14px;padding:12px;border-radius:12px;background:#2c2a1c;border:1px solid #6a5c32;color:#f4dfa4;font-size:12px}
+.roomrow{display:flex;gap:8px;flex-wrap:wrap}.roomrow input{min-width:0;flex:1}.muted{color:var(--muted)}footer{text-align:center;color:#7f94b3;font-size:12px;padding:0 16px 22px}
+@media(max-width:850px){main{grid-template-columns:1fr;padding:10px}.mapwrap{height:52vh;min-height:300px}header{padding:12px}.tag{display:none}.side{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="logo">WORLD <span>LEADERS</span></div><div class="tag">ГЕОПОЛИТИЧЕСКАЯ СТРАТЕГИЯ</div></div>
+  <button class="primary" id="newGame">🎲 Новая игра</button>
+</header>
+<main>
+  <section class="card">
+    <div class="cardhead"><h2>🌍 Политическая карта мира</h2><span class="small" id="mapMessage">Загрузка карты…</span></div>
+    <div class="mapwrap">
+      <svg id="map" viewBox="0 0 960 500" aria-label="Карта мира"><rect width="960" height="500" fill="#0b1728"/></svg>
+      <div class="mapstatus"><div class="pill" id="selectedPill">Выбери страну на карте</div><div class="pill">Нажми на страну, чтобы выбрать</div></div>
+    </div>
+    <div class="content">
+      <div class="roomrow"><input id="roomCode" maxlength="8" placeholder="Код комнаты (например, WL-4821)"><button id="createRoom">Создать комнату</button><button id="joinRoom">Войти</button></div>
+      <div class="small" style="margin-top:8px">Комнаты пока работают как локальная демонстрация на этом устройстве.</div>
+    </div>
+  </section>
+  <aside class="side">
+    <section class="card">
+      <div class="cardhead"><h2>🏛️ Твоя держава</h2><span class="small" id="turnLabel">Ход 1</span></div>
+      <div class="content">
+        <h1 class="countrytitle" id="countryName"><span class="flag">🌐</span>Выбери страну</h1>
+        <div class="muted" id="countryHint">Нажми «Новая игра», чтобы получить случайную страну.</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><label>Казна</label><b id="money">—</b></div>
+        <div class="stat"><label>Экономика</label><b id="economy">—</b></div>
+        <div class="stat"><label>Влияние</label><b id="influence">—</b></div>
+        <div class="stat"><label>Армия</label><b id="army">—</b></div>
+      </div>
+      <div class="content">
+        <div class="small">ДИПЛОМАТИЯ И УПРАВЛЕНИЕ</div>
+        <div class="actions">
+          <button id="trade">🤝 Торговое соглашение</button>
+          <button id="alliance">🛡️ Предложить союз</button>
+          <button id="invest">📈 Инвестировать</button>
+          <button class="warn" id="war">⚔️ Начать конфликт</button>
+        </div>
+        <div class="small" style="margin-top:10px">Действия меняют показатели только в этом прототипе; это не подключено к другим игрокам.</div>
+      </div>
+    </section>
+    <section class="card">
+      <div class="cardhead"><h2>📜 Хроника мира</h2><button id="clearLog">Очистить</button></div>
+      <div class="log" id="log"><p>Добро пожаловать в WORLD LEADERS. Начни новую игру!</p></div>
+    </section>
+  </aside>
+</main>
+<footer>WORLD LEADERS · первая версия приложения · игра сохраняет состояние только в текущем сеансе</footer>
+<script>
+const $=id=>document.getElementById(id);
+const names={"004":"Афганистан","008":"Албания","012":"Алжир","024":"Ангола","032":"Аргентина","036":"Австралия","040":"Австрия","050":"Бангладеш","056":"Бельгия","068":"Боливия","076":"Бразилия","100":"Болгария","116":"Камбоджа","120":"Камерун","124":"Канада","152":"Чили","156":"Китай","170":"Колумбия","180":"ДР Конго","188":"Коста-Рика","191":"Хорватия","203":"Чехия","208":"Дания","218":"Эквадор","818":"Египет","231":"Эфиопия","246":"Финляндия","250":"Франция","276":"Германия","288":"Гана","300":"Греция","320":"Гватемала","348":"Венгрия","356":"Индия","360":"Индонезия","364":"Иран","368":"Ирак","372":"Ирландия","376":"Израиль","380":"Италия","392":"Япония","400":"Иордания","398":"Казахстан","404":"Кения","410":"Южная Корея","414":"Кувейт","422":"Ливан","434":"Ливия","458":"Малайзия","484":"Мексика","504":"Марокко","524":"Непал","528":"Нидерланды","554":"Новая Зеландия","566":"Нигерия","578":"Норвегия","586":"Пакистан","604":"Перу","608":"Филиппины","616":"Польша","620":"Португалия","642":"Румыния","643":"Россия","682":"Саудовская Аравия","686":"Сенегал","710":"ЮАР","724":"Испания","729":"Судан","752":"Швеция","756":"Швейцария","760":"Сирия","764":"Таиланд","792":"Турция","804":"Украина","784":"ОАЭ","826":"Великобритания","840":"США","858":"Уругвай","704":"Вьетнам","887":"Йемен","894":"Замбия","716":"Зимбабве"};
+const flags={"Россия":"🇷🇺","США":"🇺🇸","Китай":"🇨🇳","Германия":"🇩🇪","Франция":"🇫🇷","Великобритания":"🇬🇧","Япония":"🇯🇵","Индия":"🇮🇳","Бразилия":"🇧🇷","Канада":"🇨🇦","Австралия":"🇦🇺","Украина":"🇺🇦","Турция":"🇹🇷","Италия":"🇮🇹","Испания":"🇪🇸","ЮАР":"🇿🇦"};
+let state={country:null,turn:1,money:1000,economy:50,influence:30,army:40,selected:null,features:[]};
+const svg=$('map'), NS='http://www.w3.org/2000/svg';
+function addLog(s){let p=document.createElement('p');p.textContent='Ход '+state.turn+' · '+s;$('log').prepend(p)}
+function update(){ $('countryName').innerHTML='<span class="flag">'+(flags[state.country]||'🏳️')+'</span>'+state.country;$('countryHint').textContent='Управляй экономикой, влиянием и армией своей страны.';$('money').textContent=state.money.toLocaleString('ru-RU')+' 💰';$('economy').textContent=state.economy+'/100';$('influence').textContent=state.influence+'/100';$('army').textContent=state.army+'/100';$('turnLabel').textContent='Ход '+state.turn; }
+function startGame(){let pool=Object.values(names);state.country=pool[Math.floor(Math.random()*pool.length)];state.turn=1;state.money=800+Math.floor(Math.random()*900);state.economy=35+Math.floor(Math.random()*45);state.influence=20+Math.floor(Math.random()*40);state.army=25+Math.floor(Math.random()*55);state.features=[];update();addLog('Тебе случайно досталась страна: '+state.country+'. Удачи, лидер!');}
+function action(type){if(!state.country){addLog('Сначала начни новую игру.');return}state.turn++;if(type==='trade'){state.money+=180;state.economy=Math.min(100,state.economy+4);state.influence=Math.min(100,state.influence+2);addLog('Подписано торговое соглашение. Казна и экономика выросли.')}if(type==='alliance'){state.influence=Math.min(100,state.influence+8);state.army=Math.min(100,state.army+3);addLog('Дипломатическая миссия укрепила международное влияние.')}if(type==='invest'){if(state.money<150){addLog('Недостаточно средств для инвестиций.');state.turn--;return}state.money-=150;state.economy=Math.min(100,state.economy+10);addLog('Инвестиции поддержали экономику.')}if(type==='war'){state.money=Math.max(0,state.money-120);let win=Math.random()>.45;if(win){state.influence=Math.min(100,state.influence+5);state.army=Math.max(0,state.army-6);addLog('Условный исход конфликта: преимущество достигнуто, армия ослабла.')}else{state.influence=Math.max(0,state.influence-5);state.army=Math.max(0,state.army-12);addLog('Условный исход конфликта: потери ресурсов и влияния.')} }update();}
+function feature(code){if(!state.country)return;let name=names[String(code).padStart(3,'0')];if(!name)name='Страна';$('selectedPill').textContent='Выбрано: '+name;state.selected=name;document.querySelectorAll('.country.selected').forEach(x=>x.classList.remove('selected'));let el=document.querySelector('[data-code="'+code+'"]');if(el)el.classList.add('selected');}
+$('newGame').onclick=startGame;$('trade').onclick=()=>action('trade');$('alliance').onclick=()=>action('alliance');$('invest').onclick=()=>action('invest');$('war').onclick=()=>action('war');$('clearLog').onclick=()=>$('log').replaceChildren();
+$('createRoom').onclick=()=>{let c=$('roomCode');if(!c.value.trim())c.value='WL-'+Math.floor(1000+Math.random()*9000);addLog('Демонстрационная комната '+c.value+' подготовлена на этом устройстве.')};
+$('joinRoom').onclick=()=>{let c=$('roomCode').value.trim();addLog(c?'Попытка локального входа в комнату '+c+'. Для настоящей онлайн-игры нужен сервер.':'Введи код комнаты.')};
+function pathFrom(coords){return coords.map((poly)=>poly.map((ring)=>ring.map((p,i)=>{let x=(p[0]+180)/360*960,y=(90-p[1])/180*500;return (i?'L':'M')+x.toFixed(1)+','+y.toFixed(1)}).join('')+'Z').join('')).join('');}
+async function loadMap(){try{let r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');if(!r.ok)throw 0;let topo=await r.json();let topojsonScript=document.createElement('script');topojsonScript.src='https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js';topojsonScript.onload=()=>{let geo=topojson.feature(topo,topo.objects.countries);geo.features.forEach((f,i)=>{let d=pathFrom(f.geometry.type==='Polygon'?f.geometry.coordinates:f.geometry.coordinates.flat());let p=document.createElementNS(NS,'path');p.setAttribute('d',d);p.setAttribute('class','country');p.setAttribute('fill',['#2b7a78','#3b6388','#826a9c','#8b7849','#427d62'][i%5]);p.setAttribute('data-code',String(f.id).padStart(3,'0'));p.setAttribute('aria-label',names[String(f.id).padStart(3,'0')]||'Страна');p.addEventListener('click',()=>feature(f.id));svg.appendChild(p)});$('mapMessage').textContent='Карта загружена';};document.head.appendChild(topojsonScript)}catch(e){$('mapMessage').textContent='Нет подключения к карте';let t=document.createElementNS(NS,'text');t.setAttribute('x','480');t.setAttribute('y','245');t.setAttribute('text-anchor','middle');t.setAttribute('fill','#9db0cc');t.setAttribute('font-size','18');t.textContent='Для загрузки карты включи интернет';svg.appendChild(t)}}
+loadMap();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+}
+</script>
+</body></html>
